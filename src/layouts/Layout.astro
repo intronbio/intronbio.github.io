@@ -26,20 +26,37 @@ const { title = "内含子生物科技 | Intron Bio" } = Astro.props;
 
     <div class="max-w-6xl mx-auto px-6">
       
-      <header class="flex justify-between items-center py-10">
+      <header class="flex justify-between items-center py-10 relative z-50">
         <a href="/" class="flex items-center gap-3 group">
           <div class="w-8 h-8 bg-cyan-500 rounded-sm flex items-center justify-center font-bold text-black text-xs group-hover:bg-cyan-400 transition-colors">IB</div>
           <div class="text-xl font-bold tracking-tighter text-white">
             INTRON BIO <span class="hidden md:inline text-slate-500 font-medium ml-1">内含子生物</span>
           </div>
         </a>
+
         <nav class="hidden md:flex gap-10 text-xs uppercase tracking-[0.2em] text-slate-400 items-center">
           <a href="/#services" class="hover:text-cyan-400 transition-colors">Services / 业务</a>
           <a href="/#expertise" class="hover:text-cyan-400 transition-colors">Expertise / 核心</a>
           <a href="/news" class="hover:text-cyan-400 transition-colors">News / 资讯</a>
           <a href="/#contact" class="hover:text-cyan-400 transition-colors border border-slate-700 px-4 py-2 rounded-full hover:border-cyan-400">Contact / 联系</a>
         </nav>
+
+        <button id="mobile-menu-btn" class="md:hidden text-slate-400 hover:text-white p-2 focus:outline-none">
+          <svg id="icon-hamburger" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 block">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+          <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </header>
+
+      <div id="mobile-menu" class="fixed inset-0 bg-[#020617]/95 backdrop-blur-md z-40 hidden flex-col items-center justify-center gap-8 text-sm uppercase tracking-[0.2em] text-slate-300">
+        <a href="/#services" class="mobile-link hover:text-cyan-400 transition-colors">Services / 业务</a>
+        <a href="/#expertise" class="mobile-link hover:text-cyan-400 transition-colors">Expertise / 核心</a>
+        <a href="/news" class="mobile-link hover:text-cyan-400 transition-colors">News / 资讯</a>
+        <a href="/#contact" class="mobile-link text-cyan-400 border border-slate-700 px-8 py-3 rounded-full">Contact / 联系</a>
+      </div>
 
       <slot /> 
 
@@ -60,5 +77,39 @@ const { title = "内含子生物科技 | Intron Bio" } = Astro.props;
       </footer>
 
     </div>
+
+    <script>
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const iconHamburger = document.getElementById('icon-hamburger');
+      const iconClose = document.getElementById('icon-close');
+      const mobileLinks = document.querySelectorAll('.mobile-link');
+
+      function toggleMenu() {
+        if (mobileMenu) {
+          // 切换菜单的显示与隐藏
+          mobileMenu.classList.toggle('hidden');
+          mobileMenu.classList.toggle('flex');
+          // 防止背景跟着滚动
+          document.body.classList.toggle('overflow-hidden');
+          
+          // 在汉堡图标和关闭图标之间来回切换
+          iconHamburger.classList.toggle('hidden');
+          iconHamburger.classList.toggle('block');
+          iconClose.classList.toggle('hidden');
+          iconClose.classList.toggle('block');
+        }
+      }
+
+      // 绑定点击事件
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+      }
+
+      // 点击链接跳转后自动关掉菜单并恢复图标
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', toggleMenu);
+      });
+    </script>
   </body>
 </html>
