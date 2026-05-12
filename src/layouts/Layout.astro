@@ -28,7 +28,7 @@ const { title = "内含子生物科技 | Intron Bio" } = Astro.props;
       
       <header class="flex justify-between items-center py-10 relative z-50">
         <a href="/" class="flex items-center gap-3 group">
-          <div class="w-8 h-8 bg-cyan-500 rounded-sm flex items-center justify-center font-bold text-black text-xs group-hover:bg-cyan-400 transition-colors">IB</div>
+          <img src="/favicon.svg" alt="IB Logo" class="w-8 h-8 object-contain transition-colors">
           <div class="text-xl font-bold tracking-tighter text-white">
             INTRON BIO <span class="hidden md:inline text-slate-500 font-medium ml-1">内含子生物</span>
           </div>
@@ -93,19 +93,20 @@ const { title = "内含子生物科技 | Intron Bio" } = Astro.props;
       <slot /> 
 
       <footer id="contact" class="py-24 text-center">
-        <div class="max-w-2xl mx-auto">
-          <h2 class="text-3xl font-bold mb-8 text-white">开启您的智能科研之旅</h2>
-          <p class="text-slate-400 mb-12 italic text-lg">“Intron: The essential information within the code.”</p>
-          <div class="text-slate-500 space-y-2 text-sm">
-            <p class="text-lg">内含子生物科技(上海)有限公司</p>
-            <p>Intron Biotechnology (Shanghai) Co., Ltd.</p>
-            <p class="pt-6 font-mono text-lg text-cyan-500/70 select-all">sale@intronbio.tech   </p>
-            <p class="pt-6 font-mono text-lg text-cyan-500/70 select-all">+86 17501621170</p>
-          </div>
+      <div class="text-slate-500 space-y-2 text-sm">
+        <div class="flex items-center justify-center gap-3 text-lg">
+          <!-- 底部小Logo -->
+          <img 
+            src="/favicon.svg" 
+            alt="Logo" 
+            class="w-6 h-6 object-contain"
+          >
+          内含子生物科技(上海)有限公司
         </div>
-        <div class="mt-24 text-[10px] uppercase tracking-widest text-slate-700">
-          &copy; 2026 INTRON BIO. All Rights Reserved.
-        </div>
+        <p>Intron Biotech (Shanghai) Co., Ltd.</p>
+        <p class="pt-6 font-mono text-lg text-cyan-500/70 select-all">sale@intronbio.tech   </p>
+        <p class="pt-6 font-mono text-lg text-cyan-500/70 select-all">+86 17501621170</p>
+      </div>
       </footer>
 
     </div>
