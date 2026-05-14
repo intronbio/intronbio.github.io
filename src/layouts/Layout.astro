@@ -19,6 +19,12 @@ const { title = "内含子生物科技 | Intron BioTech" } = Astro.props;
   
   <body class="bg-[#020617] text-slate-200 font-sans antialiased selection:bg-cyan-500/30">
     
+    <!-- 粒子背景 Canvas -->
+    <canvas 
+      id="particleCanvas" 
+      class="fixed inset-0 w-full h-full -z-10 pointer-events-none"
+    ></canvas>
+
     <div class="fixed inset-0 -z-10 overflow-hidden">
       <div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-cyan-900/10 blur-[120px]"></div>
       <div class="absolute top-[20%] -right-[10%] w-[30%] h-[50%] rounded-full bg-indigo-900/10 blur-[120px]"></div>
@@ -40,7 +46,6 @@ const { title = "内含子生物科技 | Intron BioTech" } = Astro.props;
           <a href="/news" class="hover:text-cyan-400 transition-colors">News / 资讯</a>
           <a href="/#contact" class="hover:text-cyan-400 transition-colors border border-slate-700 px-4 py-2 rounded-full hover:border-cyan-400">Contact / 联系</a>
           
-          <!-- 桌面端购物车 - 与导航栏融为一体，间距与其他元素一致 -->
           <a 
             href="https://chinabio.taobao.com" 
             target="_blank" 
@@ -57,7 +62,6 @@ const { title = "内含子生物科技 | Intron BioTech" } = Astro.props;
         </nav>
 
         <div class="flex md:hidden items-center gap-4">
-          <!-- 移动端购物车 - 放在汉堡菜单左侧，绝对不会重叠 -->
           <a 
             href="https://chinabio.taobao.com" 
             target="_blank" 
@@ -95,7 +99,6 @@ const { title = "内含子生物科技 | Intron BioTech" } = Astro.props;
       <footer id="contact" class="py-24 text-center">
       <div class="text-slate-500 space-y-2 text-sm">
         <div class="flex items-center justify-center gap-3 text-lg">
-          <!-- 底部小Logo -->
           <img 
             src="/favicon.svg" 
             alt="Logo" 
@@ -112,6 +115,7 @@ const { title = "内含子生物科技 | Intron BioTech" } = Astro.props;
     </div>
 
     <script>
+      // 移动端菜单逻辑
       const mobileMenuBtn = document.getElementById('mobile-menu-btn');
       const mobileMenu = document.getElementById('mobile-menu');
       const iconHamburger = document.getElementById('icon-hamburger');
@@ -120,13 +124,9 @@ const { title = "内含子生物科技 | Intron BioTech" } = Astro.props;
 
       function toggleMenu() {
         if (mobileMenu) {
-          // 切换菜单的显示与隐藏
           mobileMenu.classList.toggle('hidden');
           mobileMenu.classList.toggle('flex');
-          // 防止背景跟着滚动
           document.body.classList.toggle('overflow-hidden');
-          
-          // 在汉堡图标和关闭图标之间来回切换
           iconHamburger.classList.toggle('hidden');
           iconHamburger.classList.toggle('block');
           iconClose.classList.toggle('hidden');
@@ -134,15 +134,101 @@ const { title = "内含子生物科技 | Intron BioTech" } = Astro.props;
         }
       }
 
-      // 绑定点击事件
       if (mobileMenuBtn) {
         mobileMenuBtn.addEventListener('click', toggleMenu);
       }
 
-      // 点击链接跳转后自动关掉菜单并恢复图标
       mobileLinks.forEach(link => {
         link.addEventListener('click', toggleMenu);
       });
+
+      // 科技粒子背景效果
+      const canvas = document.getElementById('particleCanvas');
+      const ctx = canvas.getContext('2d');
+      let w, h, particles;
+      const mouse = { x: null, y: null, radius: 150 };
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        initParticles();
+      }
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * w;
+          this.y = Math.random() * h;
+          this.size = Math.random() * 1.8 + 0.4;
+          this.speedX = Math.random() * 0.5 - 0.25;
+          this.speedY = Math.random() * 0.5 - 0.25;
+          this.color = 'rgba(125, 211, 255, 0.5)';
+        }
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+
+          if (this.x < 0 || this.x > w) this.speedX *= -1;
+          if (this.y < 0 || this.y > h) this.speedY *= -1;
+
+          const dx = this.x - mouse.x;
+          const dy = this.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < mouse.radius) {
+            const force = (mouse.radius - dist) / mouse.radius;
+            this.x -= dx * force * 0.3;
+            this.y -= dy * force * 0.3;
+          }
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+        }
+      }
+
+      function connect() {
+        for (let a = 0; a < particles.length; a++) {
+          for (let b = a; b < particles.length; b++) {
+            const dx = particles[a].x - particles[b].x;
+            const dy = particles[a].y - particles[b].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 140) {
+              const opacity = 0.2 - dist / 700;
+              ctx.strokeStyle = `rgba(125, 211, 255, ${opacity})`;
+              ctx.lineWidth = 0.5;
+              ctx.beginPath();
+              ctx.moveTo(particles[a].x, particles[a].y);
+              ctx.lineTo(particles[b].x, particles[b].y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      function initParticles() {
+        particles = [];
+        for (let i = 0; i < 180; i++) {
+          particles.push(new Particle());
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => { p.update(); p.draw(); });
+        connect();
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('mousemove', (e) => {
+        mouse.x = e.x;
+        mouse.y = e.y;
+      });
+
+      resize();
+      window.addEventListener('resize', resize);
+      initParticles();
+      animate();
     </script>
   </body>
 </html>
